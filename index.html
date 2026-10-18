@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eticômetro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+<main>
+<div class="hud" id="hud" hidden><div><span id="lvl"></span><button onclick="gl()" style="background:none;border:1px solid var(--line);padding:2px 10px;font-size:.8rem">📖 Glossário</button><b id="xp"></b></div><div class="bar"><i id="pb" style="width:0"></i></div></div>
+<div id="app"></div>
+<button id="fab" aria-label="Aparência e leitura" aria-expanded="false" onclick="tp()">Aa</button><div id="panel" hidden role="dialog" aria-label="Aparência e leitura"></div>
+</main>
+<script src="js/data.js"></script>
+<script src="js/glossary.js"></script>
+<script src="js/state.js"></script>
+<script src="js/appearance.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/screens.js"></script>
+<script src="js/report.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

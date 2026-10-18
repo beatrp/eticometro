@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eticômetro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Tokens de cor e tipografia, e temas (escuro, claro, suave, alto contraste, daltonismo) */
+:root{--bg:#070B14;--ink:#E6F1FF;--mut:#8DA2C0;--card:#0E1729;--line:#1F3354;--acc:#22E4FF;--acc2:#FF3DAE;--gold:#FFC53D;--ok:#3DFFA2;--acc-ink:#04121A;--soft:#13213A;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#EAF0F8;--ink:#0B1B33;--mut:#4A5C78;--card:#FFFFFF;--line:#B5C6DE;--acc:#007C9A;--acc2:#C2187C;--gold:#A86B00;--ok:#067D4F;--acc-ink:#FFFFFF;--soft:#DCE6F3;color-scheme:light}}
+:root[data-theme="light"]{--bg:#EAF0F8;--ink:#0B1B33;--mut:#4A5C78;--card:#FFFFFF;--line:#B5C6DE;--acc:#007C9A;--acc2:#C2187C;--gold:#A86B00;--ok:#067D4F;--acc-ink:#FFFFFF;--soft:#DCE6F3;color-scheme:light}
+:root{--fs:17px;--fb:"Atkinson Hyperlegible",system-ui,sans-serif;--fh:"Lexend",system-ui,sans-serif;--lh:1.6;--ls:0}
+:root[data-theme="contraste"]{--bg:#000000;--ink:#FFFFFF;--mut:#E6E6E6;--card:#000000;--line:#FFFFFF;--acc:#FFEB3B;--acc2:#00E5FF;--gold:#FFEB3B;--ok:#00FF7F;--acc-ink:#000000;--soft:#1A1A1A;color-scheme:dark}
+:root[data-theme="daltonico"]{--bg:#FAFAF7;--ink:#111827;--mut:#46515F;--card:#FFFFFF;--line:#8E9AA8;--acc:#0072B2;--acc2:#D55E00;--gold:#8F6200;--ok:#007A5A;--acc-ink:#FFFFFF;--soft:#E8EEF4;color-scheme:light}
+:root[data-theme="suave"]{--bg:#F6EFDF;--ink:#2B2A26;--mut:#5A564A;--card:#FFFBF0;--line:#CFC5AA;--acc:#2F5D8A;--acc2:#9C4A2F;--gold:#8A6100;--ok:#2F6B3F;--acc-ink:#FFFFFF;--soft:#EBE2CC;color-scheme:light}
+</style>
+<style>
+/* Reset, corpo do documento, títulos e elementos básicos */
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:1rem;line-height:var(--lh);letter-spacing:var(--ls)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+body::after{content:"";position:fixed;inset:0;background:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.06;pointer-events:none;z-index:-1}
+h1,h2,h3{font-family:var(--fh);margin:0 0 .5em;line-height:1.2}
+h1{font-size:2.6rem;font-weight:700;letter-spacing:.02em}h2{font-size:1.6rem;font-weight:700}h3{font-size:1.1rem;font-weight:500}
+h1 span{color:var(--acc);text-shadow:none}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,textarea:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+textarea{width:100%;min-height:110px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);padding:10px;resize:vertical}
+svg text{fill:var(--ink);font:12px "Atkinson Hyperlegible",system-ui,sans-serif}
+html{font-size:var(--fs)}
+[hidden]{display:none!important}
+</style>
+<style>
+/* Estrutura: coluna principal, HUD, barra de XP, linhas e mapa de fases */
+main{max-width:720px;margin:0 auto;padding:0 16px 60px}
+.hud{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;padding:10px 0;border-bottom:1px solid var(--line)}
+.hud div{display:flex;justify-content:space-between;font-size:.8rem;color:var(--mut);margin-bottom:6px}
+.hud b{color:var(--gold)}
+.bar{height:8px;background:var(--soft);clip-path:polygon(0 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .5s}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.map{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+</style>
+<style>
+/* Componentes: cartões, chips, opções, botões, escalas, insígnias, painel de aparência, termos grifados */
+.card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--acc);padding:16px;margin:14px 0;border-radius:12px}
+.card.case{border-left-color:var(--acc2)}
+.mut{color:var(--mut);font-size:.85rem}
+.tag{display:inline-block;font-size:.75rem;color:var(--acc);border:1px solid var(--acc);padding:1px 8px;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{background:var(--soft);border:1px solid var(--line);padding:7px 12px;min-height:40px;font-size:.88rem}
+.chip[aria-pressed="true"]{border-color:var(--acc);color:var(--acc);box-shadow:0 0 10px -2px var(--acc)}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);padding:12px 14px;margin:8px 0}
+.opt[aria-pressed="true"]{border-color:var(--acc2);box-shadow:0 0 12px -3px var(--acc2);background:var(--soft)}
+.opt.good{border-color:var(--ok)}.opt.bad{border-color:var(--acc2);opacity:.7}
+.btn{background:var(--acc);color:var(--acc-ink);border:0;padding:13px 24px;font-weight:700;min-height:48px;border-radius:10px}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.lk{display:flex;gap:6px;margin:6px 0 14px}
+.lk button{flex:1;min-height:44px;border:1px solid var(--line);background:var(--card);font-weight:700}
+.lk button[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.lk .skip{flex:1.7;font-weight:400;font-size:.72rem}
+.node{text-align:left;background:var(--card);border:1px solid var(--line);padding:14px;min-height:112px}
+.node.done{border-color:var(--ok)}.node:disabled{opacity:.4;cursor:not-allowed}
+.node b{display:block;font-family:var(--fh);font-size:1.05rem}
+.crit,.badge{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.badge{justify-content:flex-start;align-items:center}.badge i{font-style:normal;font-size:1.5rem;width:42px;height:42px;display:grid;place-items:center;background:var(--soft);border:1px solid var(--gold);flex:none}
+.off{opacity:.35;filter:grayscale(1)}
+details{background:var(--card);border:1px solid var(--line);padding:12px 16px;margin:10px 0}
+summary{cursor:pointer;font-weight:700}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--gold);color:#07101F;padding:10px 18px;font-weight:700;z-index:9}
+mark{background:var(--gold);color:var(--acc-ink);padding:1px 6px;border-radius:5px;font-weight:700;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.term{background:var(--gold);color:var(--acc-ink);border:0;border-radius:5px;padding:0 5px;font:inherit;font-weight:700;cursor:pointer;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.def{background:var(--soft);border-radius:5px;padding:0 4px}
+.chip,.opt,.node,details,textarea,.lk button{border-radius:10px}.chip{border-radius:999px}
+.chip[aria-pressed="true"]{border-width:2px;font-weight:700}
+.chip[aria-pressed="true"]::before,.opt[aria-pressed="true"]::before{content:"\2713  ";font-weight:700}
+#fab{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:8;width:54px;height:54px;border-radius:50%;background:var(--acc);color:var(--acc-ink);border:2px solid var(--ink);font-weight:700;font-size:1.05rem}
+#panel{position:fixed;left:12px;right:12px;bottom:calc(78px + env(safe-area-inset-bottom,0px));max-width:480px;margin-left:auto;background:var(--card);border:2px solid var(--acc);border-radius:14px;padding:14px;z-index:8;max-height:70vh;overflow:auto}
+</style>
+</head>
+<body>
+<main>
+<div class="hud" id="hud" hidden><div><span id="lvl"></span><button onclick="gl()" style="background:none;border:1px solid var(--line);padding:2px 10px;font-size:.8rem">📖 Glossário</button><b id="xp"></b></div><div class="bar"><i id="pb" style="width:0"></i></div></div>
+<div id="app"></div>
+<button id="fab" aria-label="Aparência e leitura" aria-expanded="false" onclick="tp()">Aa</button><div id="panel" hidden role="dialog" aria-label="Aparência e leitura"></div>
+</main>
+<script>
+// Dados do instrumento: escalas, dimensões, treino (QZ), dilemas (DIL), níveis de XP
+var LV=['ainda não aparece','aparece de forma inicial','aparece de forma consistente','aparece de forma aprofundada'];
+var DIM=[['bem','Bem público'],['hon','Honestidade'],['jus','Justiça'],['pri','Privacidade'],['res','Responsabilidade']];
+var PARTES=['Usuários','Colegas','Empresa','Cliente','Sociedade','Eu mesmo(a)'];
+var PRESS=['Prazo','Chefia','Dinheiro','Medo de retaliação','"Todo mundo faz"'];
+var LIK=['Devo avisar meus superiores sobre um risco no sistema, mesmo que isso atrase a entrega.','Dados pessoais coletados para uma finalidade não devem ser usados para outra sem consentimento.','Se uma regra da empresa me parece antiética, devo questioná-la pelos canais existentes antes de descumpri-la.','Sistemas devem ser acessíveis, mesmo que isso aumente o custo.','Se um pedido está fora da minha competência, devo dizer isso com clareza.','Uma prática comum no mercado não é, por isso, uma prática ética.','Devo creditar os autores e respeitar licenças de software, mesmo quando ninguém vai perceber.','Assédio e discriminação devem ser relatados mesmo quando envolvem um colega próximo.','Não devo falar em nome da empresa sem estar autorizado a fazê-lo.','Sistemas usados por muita gente exigem cuidado extra com segurança e impacto social.','Antes de lançar um sistema, a equipe deve testá-lo com pessoas com deficiência ou pouca familiaridade com tecnologia.','É aceitável coletar mais dados do que o necessário "por precaução", para uso futuro.','Sou responsável pelo que construo, mesmo quando apenas segui uma ordem.','As limitações de um sistema devem ser contadas ao cliente, mesmo que isso reduza as chances de fechar o contrato.','Quando uma IA toma decisões que afetam pessoas, deve haver um humano que possa revisar e permitir a contestação.','Questionar publicamente uma decisão da empresa é um direito do profissional, se feito com responsabilidade.','Nenhuma tecnologia é neutra: quem a cria responde pelos usos previsíveis.','Quando o lucro entra em conflito com a segurança das pessoas, a segurança deve prevalecer.'];
+var PD='Bem público: pensar em toda a sociedade. Honestidade: não enganar e ser claro sobre limites. Justiça: tratar as pessoas sem discriminação. Privacidade: proteger dados e sigilo. Responsabilidade: assumir seu papel e agir pelos canais certos.';
+var QZ=[
+{q:'Segundo o Código da SBC, qual deve ser sempre a primeira consideração?',o:['O lucro da empresa','O bem público','O prazo do cliente','A opinião do líder'],r:1,e:'O Código afirma que o bem público é sempre a primeira consideração (Apresentação e item 3.1).'},
+{q:'Dados pessoais coletados para um propósito podem ser usados para outro?',o:['Sim, se a empresa lucrar com isso','Sim, se forem anônimos','Não, sem o consentimento da pessoa','Só com ordem do gerente'],r:2,e:'O item 1.6 diz que dados coletados para um propósito específico não devem ser usados para outros sem consentimento.'},
+{q:'Você identifica um risco de dano no sistema e os líderes não agem. O que o Código prevê?',o:['Ficar em silêncio para não prejudicar a empresa','Pode ser necessário denunciar para reduzir os danos','Corrigir escondido e não contar a ninguém','Esperar o problema acontecer'],r:1,e:'O item 1.2 diz que, se os líderes não agem, pode ser necessário denunciar, depois de avaliar cuidadosamente a situação.'},
+{q:'Uma regra da empresa parece antiética. O que o Código recomenda primeiro?',o:['Descumprir em silêncio','Contestá-la pelos canais existentes antes de infringi-la','Segui-la sempre, sem questionar','Divulgar nas redes sociais'],r:1,e:'O item 2.3 diz que regras julgadas antiéticas devem ser contestadas pelos canais existentes antes de serem infringidas.'},
+{q:'Você percebe que lhe falta competência para uma tarefa. Qual é o caminho?',o:['Aceitar e aprender sem avisar','Comunicar a falta de competência ao empregador ou cliente','Entregar e torcer','Repassar a tarefa em segredo'],r:1,e:'O item 2.6 diz que a falta de competência deve ser comunicada, e o empregador ou cliente decide como seguir.'}];
+var DIL=[
+{t:'Os dados do aplicativo',c:'Sua equipe desenvolve um app de recomendações. O gerente pede que os dados de navegação dos usuários também sejam vendidos a parceiros, algo que não consta na política de privacidade. Ele diz que todos os concorrentes fazem isso e que ninguém será prejudicado diretamente.',o:['Recuso e explico por escrito o motivo.','Proponho pedir o consentimento dos usuários antes de qualquer venda.','Faço o pedido, mas registro minha ressalva.','Consulto o jurídico ou o encarregado de dados antes de decidir.'],k:'Se você recusar, outra pessoa fará o trabalho e os usuários ficarão igualmente expostos. Sua decisão ainda faz sentido?'},
+{t:'O erro escondido',c:'Na véspera de uma entrega importante, você encontra uma falha que pode expor dados de clientes em situações raras. Corrigir leva duas semanas, e o cliente ameaça cancelar o contrato se houver atraso.',o:['Aviso o cliente e proponho um novo prazo.','Entrego no prazo e corrijo depois, sem avisar.','Entrego com um aviso de risco e um plano de correção rápida.','Levo a decisão à liderança, com os fatos.'],k:'O cancelamento pode custar empregos na equipe. A transparência vale esse custo?'},
+{t:'O algoritmo enviesado',c:'Você percebe que o sistema de triagem de currículos que ajudou a construir recomenda menos candidatos de certos bairros, sem relação com desempenho. Seu líder prefere não mexer: o sistema funciona e reduz custos.',o:['Documento o viés e proponho uma auditoria do modelo.','Deixo como está, pois funciona.','Corrijo por conta própria, sem avisar.','Levo à liderança, com dados, e peço priorização.'],k:'Ninguém foi formalmente prejudicado e o sistema reduz custos. Isso muda sua avaliação?'},
+{t:'O acesso curioso',c:'Ao depurar um erro, você tem acesso de administrador ao banco de produção. Um colega pede que você consulte o cadastro de uma pessoa famosa que é cliente, só por curiosidade. Ele garante que nada vai vazar.',o:['Recuso e explico que o acesso é só para o trabalho.','Olho rapidamente, pois ninguém saberá.','Registro o pedido e aviso o responsável pela segurança.','Sugiro usar dados de teste, sem informações reais.'],k:'Se ninguém ficar sabendo, onde está o dano? A regra vale mesmo sem testemunhas?'},
+{t:'Fora da minha área',c:'Um cliente pede um módulo de pagamentos com requisitos rígidos de segurança. Você nunca trabalhou com isso. Seu chefe diz: "você aprende rápido" e o prazo é curto.',o:['Aceito e estudo por conta própria, sem avisar.','Digo que ainda não tenho essa competência e peço tempo e apoio.','Recuso a tarefa.','Aceito, desde que um especialista revise meu trabalho.'],k:'Recusar ou pedir ajuda pode custar a confiança do cliente e a oportunidade. Competência não se adquire também fazendo?'},
+{t:'Chefão: a rede que prende',c:'A empresa pede notificações e recomendações que explorem hábitos e emoções para aumentar o tempo de uso da rede social. Dizem que os usuários escolhem usar e que mais tempo significa mais receita.',o:['Implemento como foi pedido.','Implemento com limites: opção de desativar, pausas e controles visíveis.','Recuso participar do recurso.','Proponho outras métricas de sucesso, além do tempo de uso.'],k:'Os concorrentes fazem pior e vão ganhar mercado. Seus limites podem quebrar a empresa. Ainda vale?'}];
+var GD=[['polpriv','consent','finalidade','minim','lgpd','encarr'],['transparencia','bem','conflito'],['vies','humano','imperativo'],['acesso','finalidade','anon'],['competencia','conflito','virtude'],['engaj','imperativo','neutra','moral']];DIL.forEach(function(d,i){d.g=GD[i]});var N=DIL.length,XPL=[['Recruta',0],['Operador(a)',200],['Estrategista',450],['Mestre de Guilda',700]];
+</script>
+<script>
+// Glossário: definições (GL), termos grifados no texto (hl/tt) e painéis de conceitos (glo)
+var GL={etica:['Ética e moral','Moral é o conjunto de costumes e normas aceitos por um grupo. Ética é a reflexão crítica sobre essas normas: por que existem e se são justas.'],bem:['Bem público','O interesse da sociedade como um todo, e não só da empresa ou do cliente. Para o Código da SBC, é sempre a primeira consideração.'],consent:['Consentimento informado','A pessoa só autoriza o uso dos seus dados depois de entender, em linguagem clara, o que será coletado, para quê e por quanto tempo.'],minim:['Minimização de dados','Coletar só o mínimo necessário para a finalidade e guardar apenas pelo tempo necessário (item 1.6 do Código).'],finalidade:['Finalidade','O motivo declarado para coletar um dado. Usá-lo para outro fim exige novo consentimento.'],lgpd:['LGPD e Marco Civil','Leis brasileiras que protegem os dados pessoais e os direitos dos usuários na internet.'],conflito:['Conflito de interesses','Quando seu interesse pessoal, o da empresa ou o do cliente pode atrapalhar seu julgamento. O Código pede franqueza sobre isso (item 1.3).'],transparencia:['Transparência','Informar às partes apropriadas os recursos, as limitações e os riscos de um sistema (item 1.3).'],vies:['Viés algorítmico','Quando um sistema trata grupos de pessoas de forma desigual sem relação com o objetivo, por exemplo, por aprender com dados históricos enviesados.'],humano:['Revisão humana','Decisões automatizadas que afetam pessoas precisam de alguém que possa revisá-las e de um caminho para contestá-las.'],acesso:['Acesso autorizado','Só acessar sistemas e dados com autorização ou para garantir o bem público (item 2.8). Poder acessar não é o mesmo que ter permissão.'],anon:['Reidentificação','Cruzar dados supostamente anônimos para descobrir quem é a pessoa (item 1.6).'],competencia:['Competência profissional','Saber o que você sabe e o que não sabe, e avisar quando uma tarefa passa dos seus limites (item 2.6).'],virtude:['Virtude (Aristóteles)','Equilíbrio entre extremos. A coragem, por exemplo, é o meio-termo entre covardia e temeridade.'],imperativo:['Imperativo categórico (Kant)','Agir só segundo regras que você aceitaria que valessem para todos, e tratar cada pessoa como fim, nunca apenas como meio.'],socratico:['Método socrático','Fazer perguntas até descobrir o que realmente sustenta uma opinião. A objeção do jogo usa essa ideia.'],moral:['Moral aberta e fechada (Bergson)','Moral fechada repete normas sem refletir. Moral aberta cria novos valores ao questionar o que se repete.'],neutra:['Neutralidade da tecnologia','A ideia de que a tecnologia é só uma ferramenta. A ética profissional lembra que quem a projeta responde por seus usos e impactos previsíveis.'],engaj:['Design persuasivo','Recursos que exploram hábitos e emoções para prolongar o uso. A ética discute quando isso vira manipulação, e a Aula 2 lembra o papel dos impulsos inconscientes (Freud).']};
+GL.acessib=['Acessibilidade','Projetar para que todas as pessoas consigam usar o sistema, inclusive pessoas com deficiência (item 1.4).'];GL.licenca=['Licença de software','Contrato que define como um software pode ser usado, copiado e modificado. Respeitá-lo é respeitar o trabalho dos autores (item 1.5).'];GL.assedio=['Assédio','Conduta abusiva, como assédio moral ou sexual e bullying. O Código a trata como forma de discriminação (item 1.4).'];GL.polpriv=['Política de privacidade','Documento que informa ao usuário quais dados são coletados e como serão usados. Usar os dados de outra forma contraria o que foi prometido.'];GL.encarr=['Encarregado de dados','Pessoa indicada pela empresa para ser o canal entre ela, os titulares dos dados e a autoridade de proteção de dados (LGPD).'];
+var TM=[[/política de privacidade/i,'polpriv'],[/consentimento/i,'consent'],[/enviesad\w*|viés/i,'vies'],[/bem público/i,'bem'],[/transparência/i,'transparencia'],[/acesso/i,'acesso'],[/competência/i,'competencia'],[/finalidade/i,'finalidade'],[/neutra/i,'neutra'],[/hábitos e emoções/i,'engaj'],[/humano que possa revisar/i,'humano'],[/acessíve(?:l|is)/i,'acessib'],[/licenças de software/i,'licenca'],[/assédio/i,'assedio'],[/encarregado de dados/i,'encarr']];
+function hl(s){var re=new RegExp(TM.map(function(t){return '(?:'+t[0].source+')'}).join('|'),'gi');return s.replace(re,function(m){for(var i=0;i<TM.length;i++){if(new RegExp('^(?:'+TM[i][0].source+')$','i').test(m))return '<button class="term" aria-expanded="false" onclick="tt(this,\''+TM[i][1]+'\')">'+m+'</button>'}return m})}
+function tt(b,k){var n=b.nextElementSibling;if(n&&n.classList.contains('def')){n.remove();b.setAttribute('aria-expanded','false');return}var s=document.createElement('span');s.className='def';s.textContent=' ('+GL[k][1].replace(/\.$/,'')+') ';b.after(s);b.setAttribute('aria-expanded','true')}
+var GA1=['etica','bem','consent','minim','finalidade','conflito','competencia','acesso','licenca','assedio','acessib'],GA2=['vies','transparencia','humano','neutra','engaj','lgpd'];
+function glo(keys,t){var id=t+keys[0];return '<details '+(S.op[id]?'open':'')+' data-k="'+id+'" ontoggle="S.op[this.dataset.k]=this.open"><summary>📖 '+t+'</summary>'+keys.map(function(k){return '<p style="margin:10px 0"><mark>'+GL[k][0]+'</mark>: ('+GL[k][1].replace(/\.$/,'')+')</p>'}).join('')+'</details>'}
+</script>
+<script>
+// Estado da sessão (em memória), pontuação (XP e critérios) e navegação
+var S,app=document.getElementById('app');
+function fresh(){S={step:'intro',ok:false,ap:0,back:'A',op:{},a:{},q:{},c:['','',''],done:{},d:DIL.map(function(){return{opt:null,pa:[],pr:[],pe:[],tx:'',cf:null,ct:''}})}}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function lv(n){return n>=3?3:n}
+function wc(s){return s.trim().split(/\s+/).filter(Boolean).length}
+function sc(d){var w=wc(d.tx),cw=wc(d.ct);return{p:lv(d.pa.length),c:lv(d.pr.length),f:w>=45?3:w>=20?2:w>=8?1:0,x:lv(d.pe.length),k:d.cf?(cw>=6?3:2):0}}
+function dxp(d){var s=sc(d);return(s.p+s.c+s.f+s.x+s.k)*10}
+function ndone(){return Object.keys(S.done).length}
+function qok(){return QZ.filter(function(z,i){return S.q[i]===z.r}).length}
+function xp(){var t=qok()*10;for(var i in S.done)t+=dxp(S.d[i]);return t}
+function lvi(x){var l=0;XPL.forEach(function(v,i){if(x>=v[1])l=i});return l}
+function go(s){S.step=s;render();window.scrollTo(0,0)}
+function gl(){if(S.step!=='G')S.back=S.step;go('G')}
+</script>
+<script>
+// Painel de aparência: temas, tamanho e fonte, espaçamento (salvo no aparelho)
+var P={theme:'',size:17,font:'a',sp:false};try{var sv=JSON.parse(localStorage.getItem('etic_p')||'null');if(sv)P=sv}catch(e){}
+var FB={a:'"Atkinson Hyperlegible",system-ui,sans-serif',l:'"Lexend",system-ui,sans-serif',s:'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif'},FH={a:'"Lexend",system-ui,sans-serif',l:'"Lexend",system-ui,sans-serif',s:FB.s};
+function ap(){var r=document.documentElement,s=r.style;if(P.theme)r.setAttribute('data-theme',P.theme);else r.removeAttribute('data-theme');s.setProperty('--fs',P.size+'px');s.setProperty('--fb',FB[P.font]||FB.a);s.setProperty('--fh',FH[P.font]||FH.a);s.setProperty('--lh',P.sp?'1.95':'1.6');s.setProperty('--ls',P.sp?'.04em':'0');try{localStorage.setItem('etic_p',JSON.stringify(P))}catch(e){}}
+function setP(k,v){P[k]=v;ap();pn()}
+function pc(k,l){return '<div class="chips">'+l.map(function(x){return '<button class="chip" aria-pressed="'+(P[k]===x[0])+'" onclick="setP(\''+k+'\','+JSON.stringify(x[0]).replace(/"/g,'&quot;')+')">'+x[1]+'</button>'}).join('')+'</div>'}
+function pn(){document.getElementById('panel').innerHTML='<h3>Aparência e leitura</h3><p class="mut" style="margin:0">Tema de cores</p>'+pc('theme',[['','Automático'],['dark','Escuro'],['light','Claro'],['suave','Suave'],['contraste','Alto contraste'],['daltonico','Daltonismo']])+'<p class="mut" style="margin:0">"Suave" reduz o brilho. "Daltonismo" usa azul e laranja, que quase todos os tipos de daltonismo conseguem distinguir.</p><p class="mut" style="margin:10px 0 0">Tamanho do texto</p>'+pc('size',[[15,'A−'],[17,'A'],[20,'A+'],[24,'A++']])+'<p class="mut" style="margin:0">Fonte</p>'+pc('font',[['a','Atkinson (nítida)'],['l','Lexend (leitura fácil)'],['s','Do sistema']])+pc('sp',[[false,'Espaçamento normal'],[true,'Espaçamento maior']])+'<div class="row" style="margin-top:8px"><button class="btn" onclick="tp()">Fechar</button></div>'}
+function tp(){var p=document.getElementById('panel');p.hidden=!p.hidden;document.getElementById('fab').setAttribute('aria-expanded',String(!p.hidden));if(!p.hidden)pn()}
+ap();
+</script>
+<script>
+// Interações: avisos (toast), chips, respostas do treino e conclusão de fases
+function toast(m){var t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove()},2200)}
+function gain(before,msg){toast(msg);if(lvi(xp())>lvi(before))setTimeout(function(){toast('NÍVEL ACIMA: '+XPL[lvi(xp())][0])},2300)}
+function tog(i,k,v){var a=S.d[i][k],j=a.indexOf(v);j<0?a.push(v):a.splice(j,1);render()}
+function chips(i,k,list,val){return '<div class="chips">'+list.map(function(x){var v=val?x[0]:x,l=val?x[1]:x;return '<button class="chip" aria-pressed="'+(S.d[i][k].indexOf(v)>=0)+'" onclick="tog('+i+',\''+k+'\',\''+v.replace(/"/g,'&quot;')+'\')">'+l+'</button>'}).join('')+'</div>'}
+function ans(q,v){if(S.q[q]!==undefined)return;var b=xp();S.q[q]=v;render();if(v===QZ[q].r)gain(b,'+10 XP')}
+function fin(n){var b=xp();S.done[n]=true;gain(b,'+'+dxp(S.d[n])+' XP de raciocínio');go('M')}
+</script>
+<script>
+// Renderização das telas (intro, calibragem, treino, mapa, dilemas, confronto, epílogo, glossário)
+function render(){
+ var st=S.step,h='',x=xp(),l=lvi(x),nx=XPL[l+1],lo=XPL[l][1];
+ document.getElementById('hud').hidden=(st==='intro'||st==='refuse');
+ document.getElementById('lvl').textContent='NV'+(l+1)+' · '+XPL[l][0];
+ document.getElementById('xp').textContent=x+' XP'+(nx?' / '+nx[1]:' · MAX');
+ document.getElementById('pb').style.width=(nx?Math.min(100,(x-lo)/(nx[1]-lo)*100):100)+'%';
+ if(st==='intro'){h='<p class="mut" style="margin-top:24px">&gt; sistema de reflexão ética para profissionais de TI</p><h1>ETICÔ<span>METRO</span></h1><p>Complete 6 fases com dilemas reais da profissão. Você ganha XP por <b>como raciocina</b>, não por acertar um veredito. Não existe resposta certa.</p><div class="card"><h3>Termos da missão</h3><p class="mut">Coletamos apenas suas respostas, sem nome. Elas ficam só nesta tela e somem ao fechar. O relatório é seu primeiro, e você decide se compartilha. Ele nunca é critério único para contratar, demitir ou promover.</p><label style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" '+(S.ok?'checked':'')+' onchange="S.ok=this.checked;render()" style="width:22px;height:22px;margin-top:3px"> <span>Entendi e aceito participar. Posso sair quando quiser.</span></label></div><div class="row"><button class="btn" '+(S.ok?'':'disabled')+' onclick="go(\'A\')">Iniciar missão</button><button class="btn ghost" onclick="go(\'refuse\')">Prefiro não participar</button></div>'}
+ else if(st==='refuse'){h='<h2>Sem problema.</h2><p>Recusar não tem custo nenhum. Você segue no processo normalmente, com uma conversa estruturada como alternativa.</p><div class="row"><button class="btn ghost" onclick="go(\'intro\')">Voltar</button></div>'}
+ else if(st==='A'){h='<p class="tag">Fase 0 · Calibragem</p><h2>O que você pensa ('+(S.ap+1)+'/2)</h2><p class="mut">Sem XP aqui. Serve só de ponto de partida para uma conversa. Pode pular qualquer item. Se algum termo for novo, abra os termos desta página ou o Glossário no topo. Toque nos termos grifados para ver o significado.</p>'+glo(S.ap?GA2:GA1,'Termos desta página')+LIK.map(function(q,n){if(Math.floor(n/9)!==S.ap)return '';var v=S.a[n],b='';for(var k=1;k<=5;k++)b+='<button aria-pressed="'+(v===k)+'" onclick="S.a['+n+']='+k+';render()">'+k+'</button>';return '<p style="margin:12px 0 0">'+hl(q)+'</p><div class="lk">'+b+'<button class="skip" aria-pressed="'+(v===0)+'" onclick="S.a['+n+']=0;render()">Prefiro não responder</button></div>'}).join('')+'<p class="mut">1 = discordo totalmente · 3 = neutro · 5 = concordo totalmente</p><div class="row">'+(S.ap?'<button class="btn ghost" onclick="S.ap=0;go(\'A\')">Voltar</button><button class="btn" onclick="go(\'Q\')">Próximo: treino</button>':'<button class="btn" onclick="S.ap=1;go(\'A\')">Próxima página</button>')+'</div>'}
+ else if(st==='Q'){h='<p class="tag">Treino · Código da SBC</p><h2>Desafio relâmpago</h2><p class="mut">Aqui existe resposta certa, porque o teste é sobre o que o Código diz. Cada acerto vale +10 XP.</p>'+QZ.map(function(z,n){var a=S.q[n];return '<div class="card"><p style="margin-top:0"><b>'+(n+1)+'.</b> '+z.q+'</p>'+z.o.map(function(o,j){var c=a===undefined?'':(j===z.r?' good':(j===a?' bad':''));return '<button class="opt'+c+'" '+(a!==undefined?'disabled':'')+' onclick="ans('+n+','+j+')">'+o+'</button>'}).join('')+(a!==undefined?'<p class="mut">'+z.e+'</p>':'')+'</div>'}).join('')+'<div class="row"><button class="btn" onclick="go(\'M\')">Abrir o mapa de fases</button></div>'}
+ else if(st==='M'){var nd=ndone();h='<h2>Mapa de fases</h2><p class="mut">Conclua 3 fases para liberar o Chefão e o relatório. '+nd+' de '+N+' concluídas.</p><div class="map">'+DIL.map(function(d,i){var lock=(i===N-1&&nd<3&&!S.done[i]);return '<button class="node'+(S.done[i]?' done':'')+'" '+(lock?'disabled':'')+' onclick="go(\'D'+i+'\')"><span class="mut">Fase '+(i+1)+'</span><b>'+d.t+'</b><span class="mut">'+(lock?'🔒 conclua 3 fases':S.done[i]?'✔ +'+dxp(S.d[i])+' XP · refazer':'disponível')+'</span></button>'}).join('')+'</div><div class="row"><button class="btn" '+(nd>=3?'':'disabled')+' onclick="go(\'C\')">Encerrar e ver relatório</button></div>'}
+ else if(st[0]==='D'){var n=+st.slice(1),d=S.d[n];
+  h='<p class="tag">Fase '+(n+1)+' de '+N+'</p><h2>'+DIL[n].t+'</h2><div class="card case">'+hl(DIL[n].c)+'</div><p class="mut">Toque nos termos grifados para ver o significado.</p>'+glo(DIL[n].g,'Conceitos desta fase')+'<h3>O que você faria?</h3>'+DIL[n].o.map(function(o,j){return '<button class="opt" aria-pressed="'+(d.opt===j)+'" onclick="S.d['+n+'].opt='+j+';render()">'+o+'</button>'}).join('')
+  +'<h3 style="margin-top:20px">Quem é afetado?</h3><p class="mut">Quem sofre as consequências da sua decisão, mesmo sem estar na conversa.</p>'+chips(n,'pa',PARTES)
+  +'<h3 style="margin-top:20px">Quais princípios do Código da SBC estão em tensão?</h3><p class="mut">Valores que não dá para atender todos ao mesmo tempo nesta situação.</p>'+chips(n,'pr',DIM,1)+'<p class="mut">'+PD+'</p>'
+  +'<h3 style="margin-top:20px">Que pressões você sente?</h3><p class="mut">Forças externas que empurram a decisão, mesmo quando você acha que não deveriam.</p>'+chips(n,'pe',PRESS)
+  +'<h3 style="margin-top:20px">Por que essa é a sua escolha?</h3><textarea placeholder="Explique com suas palavras: quem ganha, quem perde e o que pesou mais." oninput="S.d['+n+'].tx=this.value">'+esc(d.tx)+'</textarea>'
+  +'<div class="row"><button class="btn ghost" onclick="go(\'M\')">Voltar ao mapa</button><button class="btn" '+(d.opt===null?'disabled':'')+' onclick="go(\'F'+n+'\')">Enfrentar a objeção</button></div>'}
+ else if(st[0]==='F'){var n=+st.slice(1),d=S.d[n];
+  h='<p class="tag">Fase '+(n+1)+' · Confronto</p><h2>Alguém discorda de você</h2><div class="card case">'+hl(DIL[n].k)+'</div>'+glo(['socratico','moral'],'Por que esta objeção?')+'<div class="chips">'+[['mantenho','Mantenho minha escolha'],['ajusto','Ajusto minha escolha'],['duvido','Fiquei em dúvida']].map(function(y){return '<button class="chip" aria-pressed="'+(d.cf===y[0])+'" onclick="S.d['+n+'].cf=\''+y[0]+'\';render()">'+y[1]+'</button>'}).join('')+'</div><p class="mut">Manter ou mudar de ideia são respostas igualmente válidas. O que conta é explicar por quê.</p><textarea placeholder="O que a objeção mudou, ou por que não mudou?" oninput="S.d['+n+'].ct=this.value">'+esc(d.ct)+'</textarea><div class="row"><button class="btn" '+(d.cf?'':'disabled')+' onclick="fin('+n+')">Concluir fase</button></div>'}
+ else if(st==='C'){h='<p class="tag">Epílogo</p><h2>Olhando para você</h2><p class="mut">Opcional. Escreva só o que quiser.</p><p>Quando você mudou de opinião sobre algo ético? O que provocou a mudança?</p><textarea oninput="S.c[0]=this.value">'+esc(S.c[0])+'</textarea><p>Que situação profissional seria mais difícil de enfrentar para você?</p><textarea oninput="S.c[1]=this.value">'+esc(S.c[1])+'</textarea><p>O que você faria se um colega de confiança estivesse violando o Código?</p><textarea oninput="S.c[2]=this.value">'+esc(S.c[2])+'</textarea><div class="row"><button class="btn" onclick="go(\'R\')">Ver relatório</button></div>'}
+ else if(st==='G'){h='<h2>Glossário</h2><p class="mut">Conceitos usados no Eticômetro, em linguagem simples.</p>'+Object.keys(GL).map(function(k){return '<div class="card"><p style="margin:0"><mark>'+GL[k][0]+'</mark>: ('+GL[k][1].replace(/\.$/,'')+')</p></div>'}).join('')+'<div class="row"><button class="btn" onclick="go(S.back)">Voltar</button></div>'}
+ else h=report();
+ app.innerHTML=h}
+</script>
+<script>
+// Relatório: radar, insígnias, estilo de raciocínio, resumo
+function ds(){return Object.keys(S.done).map(function(i){return S.d[i]})}
+function avg(k){var a=ds(),t=0;a.forEach(function(d){t+=sc(d)[k]});return a.length?Math.round(t/a.length):0}
+function radar(){var cx=120,cy=115,R=78,pts=[],ax='',lb='',a=ds(),m=Math.max(a.length,1);DIM.forEach(function(d,i){var g=-Math.PI/2+i*2*Math.PI/5,u=a.filter(function(e){return e.pr.indexOf(d[0])>=0}).length/m,x=cx+Math.cos(g)*R,y=cy+Math.sin(g)*R;ax+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x+'" y2="'+y+'" stroke="var(--line)"/>';pts.push((cx+Math.cos(g)*R*Math.max(u,.06)).toFixed(1)+','+(cy+Math.sin(g)*R*Math.max(u,.06)).toFixed(1));lb+='<text x="'+(cx+Math.cos(g)*(R+12))+'" y="'+(cy+Math.sin(g)*(R+12)+4)+'" text-anchor="'+(Math.cos(g)>.3?'start':Math.cos(g)<-.3?'end':'middle')+'">'+d[1]+'</text>'});
+ var ring=[1,.5].map(function(k){return '<polygon points="'+DIM.map(function(d,i){var g=-Math.PI/2+i*2*Math.PI/5;return (cx+Math.cos(g)*R*k)+','+(cy+Math.sin(g)*R*k)}).join(' ')+'" fill="none" stroke="var(--line)"/>'}).join('');
+ return '<svg viewBox="0 0 240 230" width="100%" role="img" aria-label="Radar das cinco dimensões éticas que você considerou">'+ring+ax+'<polygon points="'+pts.join(' ')+'" fill="var(--acc)" fill-opacity=".25" stroke="var(--acc)" stroke-width="2"/>'+lb+'</svg>'}
+function badges(){var a=ds(),all=function(k,m){return a.length>0&&a.every(function(d){return sc(d)[k]>=m})},used=DIM.every(function(m){return a.some(function(d){return d.pr.indexOf(m[0])>=0})});
+ return[['🔭','Lente ampla','Considerou várias partes afetadas em todas as fases.',all('p',2)],['✍️','Voz própria','Justificou suas escolhas com argumentos.',all('f',2)],['🪞','Questionador(a)','Enfrentou as objeções e explicou por quê.',a.filter(function(d){return sc(d).k>=3}).length>=Math.max(2,Math.ceil(a.length/2))],['🌦️','Pé no chão','Reconheceu as pressões reais de cada situação.',all('x',2)],['🧭','Bússola completa','Usou as cinco dimensões do Código da SBC.',used],['📜','Leitor(a) do Código','Acertou 4 ou mais no desafio relâmpago.',qok()>=4],['🐉','Chefão derrotado','Concluiu a fase final.',!!S.done[N-1]]]}
+var CR=[['p','Partes afetadas'],['c','Conflito de princípios'],['f','Fundamentação'],['x','Contexto e pressões'],['k','Abertura à objeção']],ARQ={p:'Guardião(ã)',c:'Arquiteto(a) de dilemas',f:'Debatedor(a)',x:'Estrategista de contexto',k:'Questionador(a) nato(a)'};
+function arq(){var b='p';CR.forEach(function(c){if(avg(c[0])>avg(b))b=c[0]});return ARQ[b]}
+function summary(){var t='Eticômetro: perfil de reflexão (não é medida de moralidade)\n'+XPL[lvi(xp())][0]+' · '+xp()+' XP · estilo: '+arq()+'\n';CR.forEach(function(c){t+=c[1]+': '+LV[avg(c[0])]+'\n'});return t}
+function copy(){try{navigator.clipboard.writeText(summary()).then(function(){toast('Resumo copiado')},function(){toast('Não foi possível copiar')})}catch(e){toast('Não foi possível copiar')}}
+function report(){
+ return '<h1 style="margin-top:20px">Perfil de reflexão</h1><p class="mut">Só você vê este relatório agora. Ele descreve <b>como você argumentou</b> em '+ndone()+' fases, e não quem você é.</p><div class="card"><span class="tag">Estilo de raciocínio</span><h2 style="margin:0">'+arq()+'</h2><p class="mut" style="margin:6px 0 0">'+XPL[lvi(xp())][0]+' · '+xp()+' XP. O nível mede esforço de raciocínio, não se você é uma pessoa ética.</p></div><div class="card"><h3>Radar de dimensões</h3>'+radar()+'<p class="mut">Quanto mais longe do centro, mais fases em que você identificou aquele princípio.</p></div><div class="card"><h3>Seu raciocínio</h3>'+CR.map(function(c){return '<div class="crit"><span>'+c[1]+'</span><b>'+LV[avg(c[0])]+'</b></div>'}).join('')+'</div><div class="card"><h3>Insígnias</h3>'+badges().map(function(b){return '<div class="badge'+(b[3]?'':' off')+'"><i>'+b[0]+'</i><div><b>'+b[1]+(b[3]?'':' (bloqueada)')+'</b><br><span class="mut">'+b[2]+'</span></div></div>'}).join('')+'</div>'
+ +'<details><summary>Pontos para conversar</summary><p class="mut">Suas respostas da Fase 0, como ponto de partida para um diálogo, nunca como nota.</p>'+LIK.map(function(q,n){var v=S.a[n];return '<p style="margin:8px 0"><b>'+(v>0?v+'/5':'sem resposta')+'</b> · '+q+'</p>'}).join('')+'</details>'
+ +'<details><summary>Por que isto não mede sua moralidade</summary><p>Dizer o que se faria não é fazer. Valores mudam com o tempo e com a cultura (Aula 1; Hegel). Tradições éticas diferentes chegam a respostas diferentes e legítimas (Kant, Aristóteles). Quem questiona uma norma pode estar exercendo a moral aberta de Bergson. Por isso este resultado é um convite à conversa, e você pode contestá-lo ou pedir sua exclusão.</p></details>'
+ +'<details><summary>Como o Eticômetro evita riscos éticos</summary><p><b>Discriminação:</b> não há perguntas sobre religião, política ou vida pessoal, e o veredito não recebe XP.<br><b>Privacidade:</b> consentimento claro, dados mínimos, sem nome, e você pode apagar tudo.<br><b>Valor moral único:</b> nenhuma opção dos dilemas é a correta. Só o treino sobre o texto do Código tem gabarito.<br><b>Coerção:</b> não mostramos a posição da empresa, e discordar é bem-vindo.<br><b>Uso punitivo:</b> o relatório é seu primeiro, nunca é critério único e não serve para demissão ou promoção. Base: Código de Ética da SBC, itens 1.2, 1.4, 1.6 e 3.4.</p></details>'
+ +'<div class="row"><button class="btn ghost" onclick="go(\'M\')">Voltar ao mapa</button><button class="btn" onclick="copy()">Copiar resumo</button><button class="btn ghost" onclick="fresh();render();window.scrollTo(0,0)">Apagar tudo e recomeçar</button></div>'}
+</script>
+<script>
+// Ponto de entrada
+fresh();render();
+</script>
+</body>
+</html>
