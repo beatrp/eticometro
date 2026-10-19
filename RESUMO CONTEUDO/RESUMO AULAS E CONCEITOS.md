@@ -1,8 +1,4 @@
-# Resumo das Aulas: Ética e Responsabilidade Profissional
-
-Fatec Itapetininga · Prof. José Carlos Belo
-
----
+# Ética e Responsabilidade Profissional · Prof. José Carlos Belo
 
 ## Aula 1: Conceitos Fundamentais
 
