@@ -1,29 +1,29 @@
-/* Game feel: neon glows, hover lift, press feedback, entrance and XP animations */
-:root{--glow-acc:0 0 0 1px var(--acc),0 0 18px -4px var(--acc);--glow-acc2:0 0 0 1px var(--acc2),0 0 18px -4px var(--acc2)}
+/* Game feel: soft neon accents, hover lift, press feedback, entrance and XP animations */
+:root{--glow-acc:0 0 0 1px var(--acc),0 0 10px -6px var(--acc);--glow-acc2:0 0 0 1px var(--acc2),0 0 10px -6px var(--acc2)}
 body::after{opacity:.1}
-h1{text-shadow:0 0 24px color-mix(in oklab,var(--acc) 45%,transparent)}
-h1 span{text-shadow:0 0 18px var(--acc)}
+h1{text-shadow:0 0 18px color-mix(in oklab,var(--acc) 20%,transparent)}
+h1 span{text-shadow:0 0 10px color-mix(in oklab,var(--acc) 30%,transparent)}
 h2{background:linear-gradient(90deg,var(--ink),var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent}
-.tag{border-radius:6px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;box-shadow:0 0 10px -3px var(--acc)}
-.btn{text-transform:uppercase;letter-spacing:.06em;box-shadow:0 4px 0 color-mix(in oklab,var(--acc) 50%,#000),0 0 20px -6px var(--acc);transition:transform .12s,box-shadow .12s,filter .12s}
-.btn:not(:disabled):hover{transform:translateY(-2px);filter:brightness(1.1);box-shadow:0 6px 0 color-mix(in oklab,var(--acc) 50%,#000),0 0 28px -4px var(--acc)}
+.tag{border-radius:6px;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.btn{text-transform:uppercase;letter-spacing:.06em;box-shadow:0 4px 0 color-mix(in oklab,var(--acc) 50%,#000),0 0 12px -8px var(--acc);transition:transform .12s,box-shadow .12s,filter .12s}
+.btn:not(:disabled):hover{transform:translateY(-2px);filter:brightness(1.1);box-shadow:0 6px 0 color-mix(in oklab,var(--acc) 50%,#000),0 0 16px -8px var(--acc)}
 .btn:not(:disabled):active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in oklab,var(--acc) 50%,#000)}
 .btn.ghost{box-shadow:0 4px 0 var(--line)}
-.btn.ghost:not(:disabled):hover{box-shadow:0 6px 0 var(--line),var(--glow-acc)}
+.btn.ghost:not(:disabled):hover{box-shadow:0 6px 0 var(--line),0 0 10px -6px var(--acc)}
 .opt,.chip,.node,.lk button{transition:transform .12s,border-color .15s,box-shadow .15s,background .15s}
 .opt:not(:disabled):hover,.node:not(:disabled):hover,.lk button:hover,.chip:hover{transform:translateY(-2px);border-color:var(--acc);box-shadow:var(--glow-acc)}
 .opt:not(:disabled):active,.chip:active,.lk button:active,.node:not(:disabled):active{transform:scale(.97)}
 .lk button[aria-pressed="true"]{box-shadow:var(--glow-acc)}
-.opt.good{box-shadow:0 0 0 1px var(--ok),0 0 18px -4px var(--ok);background:color-mix(in oklab,var(--ok) 12%,var(--card))}
-.card{background:linear-gradient(160deg,var(--card),var(--soft));box-shadow:0 10px 30px -18px var(--acc)}
+.opt.good{box-shadow:0 0 0 1px var(--ok),0 0 10px -6px var(--ok);background:color-mix(in oklab,var(--ok) 12%,var(--card))}
+.card{background:linear-gradient(160deg,var(--card),var(--soft));box-shadow:0 10px 30px -22px var(--acc)}
 .node{position:relative;overflow:hidden;border-radius:14px;background:linear-gradient(160deg,var(--card),var(--soft))}
-.node.done{box-shadow:0 0 0 1px var(--ok),0 0 20px -6px var(--ok)}
+.node.done{box-shadow:0 0 0 1px var(--ok),0 0 12px -7px var(--ok)}
 .hud{backdrop-filter:blur(6px);background:color-mix(in oklab,var(--bg) 85%,transparent)}
-.hud b{text-shadow:0 0 10px var(--gold);font-size:.95rem}
+.hud b{font-size:.95rem}
 .bar{height:12px;border-radius:999px;clip-path:none;border:1px solid var(--line)}
-.bar i{border-radius:999px;box-shadow:0 0 12px var(--acc);background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc));background-size:200% 100%;animation:xp-shine 3s linear infinite}
-.toast{border-radius:999px;box-shadow:0 0 24px var(--gold);animation:toast-pop .35s cubic-bezier(.2,1.6,.4,1)}
-#fab{box-shadow:0 0 20px -2px var(--acc)}
+.bar i{border-radius:999px;box-shadow:0 0 8px -3px var(--acc);background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc));background-size:200% 100%;animation:xp-shine 3s linear infinite}
+.toast{border-radius:999px;box-shadow:0 0 14px -6px var(--gold);animation:toast-pop .35s cubic-bezier(.2,1.6,.4,1)}
+#fab{box-shadow:0 0 12px -6px var(--acc)}
 #app>*{animation:rise .35s ease-out both}
 #app>*:nth-child(2){animation-delay:.04s}#app>*:nth-child(3){animation-delay:.08s}#app>*:nth-child(4){animation-delay:.12s}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
