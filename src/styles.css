@@ -8,6 +8,10 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import "./legacy/tokens.css";
+@import "./legacy/base.css";
+@import "./legacy/layout.css";
+@import "./legacy/components.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -143,13 +147,3 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
-@layer base {
-  * {
-    border-color: var(--color-border);
-  }
-
-  body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-  }
-}
