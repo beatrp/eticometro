@@ -1,0 +1,2 @@
+[{"capability":"code","source":"static HTML/CSS/JS","outcome":"ported","status":"verified","next_action":"none"},
+{"capability":"database/auth/storage/integrations","source":"none (in-memory + localStorage prefs)","outcome":"not applicable","status":"verified","next_action":"none"}]
