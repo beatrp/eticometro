@@ -1,7 +1,7 @@
 /* Estrutura: coluna principal, HUD, barra de XP, linhas e mapa de fases */
-main{max-width:720px;margin:0 auto;padding:0 16px 60px}
+main{max-width:720px;margin:0 auto;padding:0 16px 110px}
 .hud{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;padding:10px 0;border-bottom:1px solid var(--line)}
-.hud div{display:flex;justify-content:space-between;font-size:.8rem;color:var(--mut);margin-bottom:6px}
+.hud div{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:space-between;font-size:.8rem;color:var(--mut);margin-bottom:6px}
 .hud b{color:var(--gold)}
 .bar{height:8px;background:var(--soft);clip-path:polygon(0 0,100% 0,calc(100% - 6px) 100%,0 100%)}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .5s}
