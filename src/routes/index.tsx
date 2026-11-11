@@ -20,14 +20,14 @@ export const Route = createFileRoute("/")({
 });
 
 type Legacy = { S?: unknown; fresh: () => void; render: () => void; gl: () => void; tp: () => void; reset: () => void; started: () => boolean };
-const W = () => window as unknown as Legacy & { __eticLoaded?: Promise<void> };
+const W = () => window as unknown as Legacy & { __eticLoaded?: Promise<void> | undefined };
 
 function loadScript(name: string) {
   return new Promise<void>((resolve, reject) => {
     const el = document.createElement("script");
     el.src = `/legacy/${name}.js?v=${VERSION}`;
     el.async = false;
-    el.dataset.etic = name;
+    el.dataset["etic"] = name;
     el.onload = () => resolve();
     el.onerror = () => reject(new Error(`Falha ao carregar ${name}.js`));
     document.body.appendChild(el);
